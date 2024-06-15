@@ -1,6 +1,7 @@
 const express = require("express")
 const mongoose = require("mongoose")
 const cors = require("cors")
+const path = require("path")
 const cookieParser = require("cookie-parser")
 const { app, server } = require("./socket/socket")
 const User = require("./models/User")
@@ -14,7 +15,7 @@ app.use(cors({
     origin: "http://localhost:5173",
     credentials: true
 }))
-
+app.use(express.static(path.join(__dirname, "dist")))
 app.use(express.static("uploads"))
 app.use(express.static("profile"))
 app.use("/api/auth", require("./routes/auth.routes"))
@@ -24,8 +25,10 @@ app.use("/api/user", userProtected, require("./routes/user.route"))
 
 
 app.use("*", (req, res) => {
-    res.status(404).json({ message: "No resource found" })
+    res.sendFile(path.join(__dirname, "dist", "index.html"))
+    res.status(404).json({ message: "resource Not foudn" })
 })
+
 
 app.use((err, req, res, next) => {
     console.log(err);
